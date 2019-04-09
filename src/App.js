@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const App = () => (
-  <h1>Test</h1>
-)
+const App = () => {
+
+  const [ transactions, setTransactions ] = useState([]);
+
+  return (
+    <section>
+    hello
+    </section>
+  )
+}
 
 export default App;

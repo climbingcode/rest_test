@@ -3,6 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const config = require('./webpack.config.js');
+const routes = require('./routes.js');
 
 const PORT = process.env.PORT || 3000;
 
@@ -18,7 +19,9 @@ app.use(webpackDevMiddleware(compiler, {
   publicPath: config.output.publicPath
 }));
 
-app.use(require('webpack-hot-middleware')(compiler)); 
+app.use(require('webpack-hot-middleware')(compiler));
+
+app.use('/api', routes);
 
 app.get('*', (req, res) => {
     res.sendFile(HTML_FILE);

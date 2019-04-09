@@ -3,10 +3,10 @@ const router = express.Router();
 const fetch = require("node-fetch");
 
 // NOTE: This could be moved to a database, will need to collect all transactions again if server crashes
-const results = {
+const db = {
   totalCount: null,
   page: 1,
-  transactions: [],
+  hits: [],
   balance: 0
 };
 
@@ -18,17 +18,10 @@ const asyncMiddleware = fn => (req, res, next) => {
 const fetchPage = async (page) => {
   try {
     const data = await fetch(`http://resttest.bench.co/transactions/${page}.json`);
-    console.log('Collected transactions from page: ', page);
     return await data.json();
   } catch(err) {
     return { };
   }
-}
-
-// Remove any transactions that are repeats
-const filterDuplicateTransactions = transactions => {
-  const transactionsJson = JSON.stringify(results.transactions);
-  return transactions.filter(transaction => transactionsJson.indexOf(JSON.stringify(transaction)) === -1);
 }
 
 // Add all new unique transactions together
@@ -36,27 +29,26 @@ const sumTransactionsBalance = transactions => {
   return transactions.reduce((total, transaction) => total += parseInt(transaction.Amount), 0);
 }
 
-const collectMissingTransactions = async (res, req, next, page = results.page) => {
+const collectMissingTransactions = async (res, req, next, page = db.page) => {
 
   const { totalCount, transactions } = await fetchPage(page);
 
   // NOTE: Set running total count if first ever request
-  if (!results.totalCount) {
-    results.totalCount = totalCount;
+  if (!db.totalCount) {
+    db.totalCount = totalCount;
   }
 
   // NOTE: Update result transactions if page has transactions and totalCount has not been exceeded
-  if (transactions && results.transactions.length < totalCount) {
-    const filteredTransactions = filterDuplicateTransactions(transactions);
-    results.transactions = [ ...results.transactions, ...filteredTransactions ];
-    results.totalCount = results.transactions.length;
-    results.balance = results.balance += sumTransactionsBalance(filteredTransactions);
-    results.page = page;
+  if (transactions && db.hits.length < totalCount) {
+    db.hits = [ ...db.hits, ...transactions ];
+    db.totalCount = db.hits.length;
+    db.balance = db.balance += sumTransactionsBalance(transactions);
+    db.page = page;
   }
 
   // NOTE: Only make requests for missing transactions when totalCount is more than running total
-  if (results.totalCount < totalCount) {
-    await collectMissingTransactions(res, req, next, results.page + 1);
+  if (db.totalCount < totalCount) {
+    await collectMissingTransactions(res, req, next, db.page + 1);
   } else {
     next();
   }
@@ -64,7 +56,7 @@ const collectMissingTransactions = async (res, req, next, page = results.page) =
 }
 
 router.get('/transactions', asyncMiddleware(collectMissingTransactions), (req, res) => {
-  res.json(results);
+  res.json(db);
 });
 
 module.exports = router;

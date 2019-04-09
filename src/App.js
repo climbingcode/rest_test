@@ -1,30 +1,37 @@
 import React, { useState, useEffect } from 'react';
+import theme from './../theme.js';
+
+import TransactionsTable from './TransactionsTable';
 
 const App = () => {
 
-  const [ transactions, setTransactions ] = useState([]);
-  const [ balance, setBalance ] = useState(0);
-
-  const fetchTransactions = async () => {
-    const res = await fetch('/api/transactions');
-    const data = await res.json();
-    setTransactions(data.transactions);
-    setBalance(data.balance);
-  }
+  const [ transactions, setTransactions ] = useState({});
 
   useEffect(() => {
-    fetchTransactions()
+    const fetchData = async () => {
+      const res = await fetch('/api/transactions');
+      const data = await res.json();
+      setTransactions(data);
+    }
+    fetchData();
   }, []);
 
   return (
     <section>
-    {
-      transactions.map(({ Ledger, Company, Amount }) => (
-        <li>{ Company } { Amount }</li>
-      ))
-    }
+      <nav style={ styles.nav }>Rest Test</nav>
+      {
+        transactions.hits ?
+        <TransactionsTable { ...transactions }/> :
+        <p>Loading...</p>
+      }
     </section>
   )
+}
+
+const styles = {
+  nav: {
+    background: theme.colors.primary
+  }
 }
 
 export default App;

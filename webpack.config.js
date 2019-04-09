@@ -8,6 +8,7 @@ module.exports = {
   mode,
   entry: {
     index: [
+      'babel-polyfill',
       'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr',
       './src/index.js'
     ]

@@ -6,7 +6,8 @@ const fetch = require("node-fetch");
 const results = {
   totalCount: null,
   page: 1,
-  transactions: []
+  transactions: [],
+  balance: 0
 };
 
 const asyncMiddleware = fn => (req, res, next) => {
@@ -24,9 +25,15 @@ const fetchPage = async (page) => {
   }
 }
 
+// Remove any transactions that are repeats
 const filterDuplicateTransactions = transactions => {
   const transactionsJson = JSON.stringify(results.transactions);
   return transactions.filter(transaction => transactionsJson.indexOf(JSON.stringify(transaction)) === -1);
+}
+
+// Add all new unique transactions together
+const sumTransactionsBalance = transactions => {
+  return transactions.reduce((total, transaction) => total += parseInt(transaction.Amount), 0);
 }
 
 const collectMissingTransactions = async (res, req, next, page = results.page) => {
@@ -43,6 +50,7 @@ const collectMissingTransactions = async (res, req, next, page = results.page) =
     const filteredTransactions = filterDuplicateTransactions(transactions);
     results.transactions = [ ...results.transactions, ...filteredTransactions ];
     results.totalCount = results.transactions.length;
+    results.balance = results.balance += sumTransactionsBalance(filteredTransactions);
     results.page = page;
   }
 

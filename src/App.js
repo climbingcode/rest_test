@@ -30,7 +30,10 @@ const App = () => {
 
 const styles = {
   nav: {
-    background: theme.colors.primary
+    background: theme.colors.primary,
+    textAlign: 'center',
+    color: '#fff',
+    padding: '20px 0'
   }
 }
 

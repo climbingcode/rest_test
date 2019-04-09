@@ -1,10 +1,11 @@
 import React from 'react';
+import theme from './../theme.js';
 
 const TransactionsTable = ({
   hits,
   balance
 }) => (
-  <table style={ styles.table }>
+  <table style={ styles.table } cellspacing="0" cellpadding="0">
     <tbody>
       <tr style={ styles.header }>
         <th>Date</th>
@@ -18,8 +19,8 @@ const TransactionsTable = ({
           Company,
           Ledger,
           Amount
-        }) => (
-          <tr style={ styles.row }>
+        }, index) => (
+          <tr style={ index % 2 === 0 ? styles.row.even : styles.row.odd }>
             <td>{ Date }</td>
             <td>{ Company }</td>
             <td>{ Ledger }</td>
@@ -39,7 +40,12 @@ const styles = {
     background: '#fff'
   },
   row: {
-    background: '#FCFBFB'
+    even: {
+      background: '#FCFBFB'
+    },
+    odd: {
+      background: '#FCFBFB'
+    }
   }
 }
 

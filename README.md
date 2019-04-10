@@ -1,25 +1,24 @@
 # Rest Test
 
-Simple Application to display transaction from an API
+Simple Application to display transactions from an API
 
 ## Getting Started
 
-Simply run the following in the App directory
+Simply run the following in the App directory and visit [localhost:3000](http://localhost:3000/)
 
 ```
     npm run start
+   
 ```
 
 ### Prerequisites
 
-Make sure that you 8.11 install or higher
+Node 8 or higher
 
 
 ### Installing
 
 Run the following in the App directory
-
-Say what the step will be
 
 ```
     npm install / yarn Install

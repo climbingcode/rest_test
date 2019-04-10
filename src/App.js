@@ -6,12 +6,17 @@ import TransactionsTable from './TransactionsTable';
 const App = () => {
 
   const [ transactions, setTransactions ] = useState({});
+  const [ error, setError ] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await fetch('/api/transactions');
-      const data = await res.json();
-      setTransactions(data);
+      try {
+        const res = await fetch('/api/transactions');
+        const data = await res.json();
+        setTransactions(data);
+      } catch(err) {
+        setError('Sorry, there was an error fetch your transactions. \n Please try again later!');
+      }
     }
     fetchData();
   }, []);
@@ -20,9 +25,11 @@ const App = () => {
     <section>
       <nav style={ styles.nav }>Rest Test</nav>
       {
-        transactions.hits ?
-        <TransactionsTable { ...transactions }/> :
-        <p style={ styles.paragraph }>Loading...</p>
+        error ?
+          <p style={ styles.error }>{ error }</p> :
+          transactions.hits ?
+            <TransactionsTable { ...transactions }/> :
+            <p style={ styles.paragraph }>Loading...</p>
       }
     </section>
   )
@@ -37,6 +44,9 @@ const styles = {
   },
   paragraph: {
     textAlign: 'center'
+  },
+  error: {
+    color: 'red'
   }
 }
 

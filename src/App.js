@@ -22,7 +22,7 @@ const App = () => {
       {
         transactions.hits ?
         <TransactionsTable { ...transactions }/> :
-        <p>Loading...</p>
+        <p style={ styles.paragraph }>Loading...</p>
       }
     </section>
   )
@@ -34,6 +34,9 @@ const styles = {
     textAlign: 'center',
     color: '#fff',
     padding: '20px 0'
+  },
+  paragraph: {
+    textAlign: 'center'
   }
 }
 

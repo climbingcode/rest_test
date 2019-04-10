@@ -18,7 +18,7 @@ module.exports = {
     publicPath: '/',
     filename: 'bundle.js'
   },
-  externals: '/node_modules/', // Need this to avoid error when working with Express
+  externals: '/node_modules/',
   module: {
     rules: [
       {
